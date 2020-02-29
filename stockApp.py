@@ -5,9 +5,10 @@ from datetime import datetime
 import os.path
 from os import path
 import psycopg2
+import config
 
 
-destinationPath = "C:/Users/Sanjaya/Desktop/SummerInternshipGrind/pythonProgs/stockApp/stock_info_by_date_excel/stockPrices_"
+destinationPath = config.path
 todays_date = datetime.today().strftime("%Y-%m-%d")
 destination = destinationPath + todays_date + ".xlsx"
 
@@ -15,7 +16,7 @@ if path.exists(destination):
     print("Today's stock prices have been saved already. Do it again tomorrow.")
     sys.exit(0)
 
-conn = psycopg2.connect("dbname=Stock_Info user=postgres password=azazel_5")
+conn = psycopg2.connect("dbname=" + config.db_name + " " + "user=" + config.user_name + " " + "password=" + config.password)
 cursor = conn.cursor()
 
 url = 'http://www.nepalstock.com/todaysprice/export'
