@@ -2,10 +2,14 @@ from rest_framework import serializers
 from .models import CompanyModel, CompanyStockInformation
 
 class CompanyModelSerializer(serializers.ModelSerializer):
-    company_id = serializers.CharField(source='id')
+    company_id = serializers.CharField(source='id', read_only=True)
     class Meta:
         model = CompanyModel
         fields = ['company_id', 'company_name']
+
+    def create(self, validated_data):
+        company, created = CompanyModel.objects.get_or_create(**validated_data)
+        return company 
 
 # A nested serializer for the stock information; it creates the company if it isn't listed and adds the stock
 # to the existing company if it does. 
@@ -22,5 +26,5 @@ class CompanyStockInformationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         company_data = validated_data.pop('company')
         company, created = CompanyModel.objects.get_or_create(**company_data)
-        stock, created_ = CompanyStockInformation.objects.get_or_create(company=company, **validated_data)
+        stock, created = CompanyStockInformation.objects.get_or_create(company=company, **validated_data)
         return stock
