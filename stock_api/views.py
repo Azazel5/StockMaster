@@ -1,21 +1,32 @@
-from rest_framework import status
-from rest_framework import mixins
-from rest_framework import generics
-from django.http import Http404
+from rest_framework import viewsets
 
-from .models import CompanyModel
-from .serializers import CompanyModelSerializer
+from .models import CompanyModel, CompanyStockInformation
+from .serializers import CompanyModelSerializer, CompanyStockInformationSerializer
 from .permissions import IsAuthenticatedSuperuser 
 
 
-class CompanyList(generics.ListCreateAPIView):
-    queryset = CompanyModel.objects.all()
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = CompanyModel.objects.all().order_by('id')
     serializer_class = CompanyModelSerializer
     permission_classes = (IsAuthenticatedSuperuser,)
 
+    def perform_create(self, serializer):
+        serializer.save()
 
-class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CompanyModel.objects.all()
-    serializer_class = CompanyModelSerializer
+# A viewset for the company information. It supports a query parameter 'company' where you can type in the 
+# company name to return a list of stocks of that company. 
+class CompanyInformationViewSet(viewsets.ModelViewSet):
+    queryset = CompanyStockInformation.objects.all().order_by('id')
+    serializer_class = CompanyStockInformationSerializer
     permission_classes = (IsAuthenticatedSuperuser,)
+
+    def get_queryset(self):
+        queryset = CompanyStockInformation.objects.all()
+        company_name = self.request.query_params.get('company', None)
+        if company_name is not None:
+            company = CompanyModel.objects.get(company_name=company_name)
+            queryset = CompanyStockInformation.objects.filter(company=company)
+        return queryset
+            
+
 
