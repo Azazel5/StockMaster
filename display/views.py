@@ -3,13 +3,14 @@ import os
 import requests
 from requests.auth import HTTPBasicAuth 
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth import authenticate, login
 
 from .stock_scraper import info_scraper
 
+# Remember that you've also added query functionality with url/stock/?company={comp_name}
 def set_display(request):
     
     api_request_stock = []
@@ -50,3 +51,18 @@ def scrape_data(request):
     else:
         return render(request, 'display/scrape.html', context={
             'message': 'You aint got the permission to do that'})
+
+def user_login(request):
+    context = None 
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password') 
+        auth = authenticate(request, username=username, password=password)
+
+        if auth is not None:
+            login(request, auth)
+            return redirect('display_home')
+        else:
+            context= {'errors': 'Authentication failed, try a different username/password combination'}
+
+    return render(request, 'display/login.html', context=context) 

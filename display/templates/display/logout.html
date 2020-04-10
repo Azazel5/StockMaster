@@ -1,0 +1,27 @@
+{% extends 'display/base.html' %}
+{% load static %}
+{% block title %}Login{% endblock title %}
+
+{% block styles %} 
+    <link href="{% static 'display/vendor/login_style.css' %}" rel="stylesheet">
+{% endblock styles %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row no-gutter">
+        <div class="d-none d-md-flex col-md-4 col-lg-6 bg-image"></div>
+        <div class="col-md-8 col-lg-6">
+            <div class="login d-flex py-5">
+            <div class="container mt-5">
+                <div class="row">
+                <div class="col-md-9 col-lg-8 mx-auto text-center">
+                    <h3 class="login-heading text-center">Hope you had fun!</h3>
+                    <a type="button" class="btn btn-primary mt-5" href="{% url 'login' %}">Log Back In</a>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
+{% endblock content %}
