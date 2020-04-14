@@ -10,9 +10,10 @@ from django.contrib.auth import authenticate, login
 
 from .stock_scraper import info_scraper
 
-# Remember that you've also added query functionality with url/stock/?company={comp_name}
+
+@login_required
 def set_display(request):
-    
+    """
     api_request_stock = []
     api_request_company = []
     stock = requests.get(url="http://127.0.0.1:8000/api/stock/").json()
@@ -29,13 +30,22 @@ def set_display(request):
         
         if stock['next'] == None and company['next'] == None:
             break 
+    """
+    # Get request with company done 
+    if request.method == 'GET':
+        company_name = request.GET.get('company')
+        if company_name != None:
+            params = {'company': company_name}
+            stock = requests.get('http://127.0.0.1:8000/api/stock/', params=params).json()
+            print(stock)
 
-    return render(request, 'display/home.html', context={
-        'accessor_stock': api_request_stock,
-        'accessor_company': api_request_company
-    })
+    return render(request, 'display/home.html')#, context={
+    #    'accessor_stock': api_request_stock,
+    #    'accessor_company': api_request_company
+    #})
 
 @csrf_exempt
+@login_required
 def scrape_data(request):
     if request.user.is_superuser:
         scraped_data = info_scraper()
@@ -66,3 +76,10 @@ def user_login(request):
             context= {'errors': 'Authentication failed, try a different username/password combination'}
 
     return render(request, 'display/login.html', context=context) 
+
+
+# amount of transcations with date 
+# top %inc and %decre with date 
+# by company  
+
+# sharesansaar sspro 

@@ -1,37 +1,133 @@
 {% extends 'display/base.html' %}
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{% block title %}Home{% endblock title %}</title>
+
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Home{% endblock title %}</title>
+
+  {% block styles %}
+  <link rel="stylesheet" href="  https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+  <link rel="stylesheet" href="{% static 'display/vendor/css/select_box.css' %}">
+
+  {% endblock styles %}
 </head>
-  <body>
-    {% block content %}
-    <div class="mt-3 ml-3">
-      <h1>STOCK INFO</h1>
-        <p>
-        {% for dictionary in accessor_stock %}
-          {% for item in dictionary.results %}
-            Name : {{ item.company.company_name }} | Num_transactions : {{ item.number_of_transactions }} |
-            Max: {{ item.maximum }} | Min: {{ item.minimum }} | Closing: {{ item.closing }} | 
-            Traded: {{ item.traded_shares }} | Amount: {{ item.amount }} | Prev_Closing: {{ item.amount }} |
-            Diff_Rs: {{ item.difference_rs }} | Date_Added: {{ item.date_added }} 
-        <br>
-          {% endfor %}
-        {% endfor %}
-        </p>
-        <h1>COMPANY INFO</h1>
-        <p>
-        {% for dictionary in accessor_company %}
-          {% for item in dictionary.results %}
-            CompanyID: {{ item.company_id }} | Company_Name: {{ item.company_name }} 
-        <br>
-          {% endfor %}
-        {% endfor %}
-        </p>
-      </div>
-      {% endblock content %}
-  </body>
+
+<body>
+  {% block content %}
+  <!--
+          <h1>STOCK INFO</h1>
+            <p>
+            {% for dictionary in accessor_stock %}
+              {% for item in dictionary.results %}
+                Name : {{ item.company.company_name }} | Num_transactions : {{ item.number_of_transactions }} |
+                Max: {{ item.maximum }} | Min: {{ item.minimum }} | Closing: {{ item.closing }} | 
+                Traded: {{ item.traded_shares }} | Amount: {{ item.amount }} | Prev_Closing: {{ item.amount }} |
+                Diff_Rs: {{ item.difference_rs }} | Date_Added: {{ item.date_added }} 
+            <br>
+              {% endfor %}
+            {% endfor %}
+            </p>
+            <h1>COMPANY INFO</h1>
+            <p>
+            {% for dictionary in accessor_company %}
+              {% for item in dictionary.results %}
+                CompanyID: {{ item.company_id }} | Company_Name: {{ item.company_name }} 
+            <br>
+              {% endfor %}
+            {% endfor %}
+            </p>
+            -->
+  <div class="row align-items-center">
+    <div class="col-sm">
+      <section class="light">
+
+        <h2>Select stocks by</h2>
+        <div>
+          <label id="label_company">
+            <input class="radio_button" type="radio" name="light">
+            <span class="design"></span>
+            <span class="text">Company</span>
+          </label>
+
+          <label id="label_transaction">
+            <input class="radio_button" type="radio" name="light">
+            <span class="design"></span>
+            <span class="text">Maximum Transaction Amount</span>
+          </label>
+
+          <label id="label_increase">
+            <input class="radio_button" type="radio" name="light">
+            <span class="design"></span>
+            <span class="text">Maximum Pecent Increase</span>
+          </label>
+          <label id="label_decrease">
+            <input class="radio_button" type="radio" name="light">
+            <span class="design"></span>
+            <span class="text">Maximum Pecent Decrease</span>
+          </label>
+        </div>
+      </section>
+    </div>
+    <!-- Add dates/search boxes to this div -->
+    <div class="col-sm d-flex">
+      <form method="GET">
+        <div class="group" style="display: none;">
+          <input name="company" class='company' type="text" required>
+          <span class="highlight"></span>
+          <span class="bar"></span>
+          <label class="company_label">Company Name</label>
+        </div>
+      </form>
+
+      <form method="GET">
+        <div class="input-group input-daterange" id="date_picker" style="display: none;">
+          <input name="start" type="text" class="form-input form-control input1" placeholder="Start Date">
+          <input name="end" type="text" class="form-control input2" placeholder="End Date"> </div>
+    </div>
+    </form>
+
+  </div>
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('.input-daterange').datepicker({
+        format: 'dd-mm-yyyy',
+        autoclose: true,
+        orientation: 'top',
+        clearBtn: true,
+      });
+
+    });
+
+    $('#label_company input:radio').click(function () {
+      $('#date_picker').hide()
+      $('.group').show()
+    });
+    $('#label_transaction input:radio').click(function () {
+      $('.group').hide()
+      $('#date_picker').show()
+    });
+    $('#label_increase input:radio').click(function () {
+      $('.group').hide()
+      $('#date_picker').show()
+    });
+    $('#label_decrease input:radio').click(function () {
+      $('.group').hide()
+      $('#date_picker').show()
+    });
+
+
+  </script>
+
+  {% endblock content %}
+
+
+</body>
+
 </html>
-
-

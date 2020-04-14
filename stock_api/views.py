@@ -2,7 +2,6 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.response import Response
 
-
 from .models import CompanyModel, CompanyStockInformation
 from .serializers import CompanyModelSerializer, CompanyStockInformationSerializer
 from .permissions import IsAuthenticatedSuperuser 
@@ -37,11 +36,16 @@ class CompanyInformationViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     def get_queryset(self):
-        company_name = self.request.query_params.get('company', None)
-        if company_name is not None:
+        if 'company' in self.request.query_params:
+            company_name = self.request.query_params.get('company', None)
             company = CompanyModel.objects.get(company_name=company_name)
-            self.queryset = CompanyStockInformation.objects.filter(company=company).order_by('id')
+            self.queryset = CompanyStockInformation.objects.filter(company=company).order_by('id')            
         return self.queryset
+
+class CompanyMaximumTransactionView(viewsets.ReadOnlyModelViewSet):
+    queryset = CompanyStockInformation.objects.all().order_by('-amount')
+    serializer_class = CompanyStockInformationSerializer
+
             
 
 

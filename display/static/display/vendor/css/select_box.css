@@ -1,0 +1,367 @@
+
+  section {
+    margin-top: 10px;
+    width: 75%;
+    padding: 16px 30px;
+    min-height: inherit;
+    position: relative;
+  }
+
+  section::after {
+    width: 42px;
+    height: 42px;
+  
+    border: 1px solid var(--primary);
+  
+    top: 11px;
+    left: 11px;
+  }
+  
+  .light {
+    --primary: hsl(250, 100%, 44%);
+    --other: hsl(0, 0%, 14%);
+  }
+  
+ h2 {
+    font-weight: lighter;
+    color: var(--other);
+    padding: 8px 4px;
+  }
+  
+  
+  /* label */
+  label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 75%;
+  
+    margin: 12px 0;
+  
+    cursor: pointer;
+    position: relative;
+  }
+  
+  
+  /* input */
+ .radio_button {
+    opacity: 0;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+  }
+  
+  
+  /* .design */
+  .design {
+    width: 16px;
+    height: 16px;
+  
+    border: 1px solid var(--other);
+    border-radius: 100%;
+    margin-right: 16px;
+  
+    position: relative;
+  }
+  
+  .design::before,
+  .design::after {
+    content: "";
+    display: block;
+  
+    width: inherit;
+    height: inherit;
+  
+    border-radius: inherit;
+  
+    position: absolute;
+    transform: scale(0);
+    transform-origin: center center;
+  }
+  
+  .design:before {
+    background: var(--other);
+    opacity: 0;
+    transition: .3s;
+  }
+  
+  .design::after {
+    background: var(--primary);
+    opacity: .4;
+    transition: .6s;
+  }
+  
+  /* checked state */
+  .radio_button:checked+.design::before {
+    opacity: 1;
+    transform: scale(.6);
+  }
+  
+  
+  /* other states */
+  .radio_button:hover+.design,
+  .radio_button:focus+.design {
+    border: 1px solid var(--other);
+  }
+  
+  .radio_button:hover+.design:before,
+  .radio_button:focus+.design:before {
+    background: var(--primary);
+  }
+  
+  .radio_button:hover~.text {
+    color: var(--primary);
+  }
+  
+  .radio_button:focus+.design::after,
+  .radio_button:active+.design::after {
+    opacity: .1;
+    transform: scale(2.6);
+  }
+
+  /* new stuff */
+
+
+.group 			  { 
+  position:relative; 
+  margin-bottom:45px; 
+}
+.company				{
+  font-size:18px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:300px;
+  border:none;
+  border-bottom:1px solid #757575;
+}
+.company:focus 		{ outline:none; }
+
+/* LABEL ======================================= */
+.company_label 				 {
+  color:#999; 
+  font-size:18px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  left:5px;
+  top:10px;
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+
+/* active state */
+.company:focus ~ label, .company:valid ~ label 		{
+  top:-20px;
+  font-size:14px;
+  color:hsl(250, 100%, 44%);
+}
+
+/* BOTTOM BARS ================================= */
+.bar 	{ position:relative; display:block; width:300px; }
+.bar:before, .bar:after 	{
+  content:'';
+  height:1px; 
+  width:0;
+  bottom:1px; 
+  position:absolute;
+  background:hsl(250, 100%, 44%); 
+  transition:0.2s ease all; 
+  -moz-transition:0.2s ease all; 
+  -webkit-transition:0.2s ease all;
+}
+.bar:before {
+  left:50%;
+}
+.bar:after {
+  right:50%; 
+}
+
+/* active state */
+.company:focus ~ .bar:before, .company:focus ~ .bar:after {
+  width:50%;
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+  position:absolute;
+  height:60%; 
+  width:100px; 
+  top:25%; 
+  left:0;
+  pointer-events:none;
+  opacity:0.5;
+}
+
+/* active state */
+.company:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+  -moz-animation:inputHighlighter 0.3s ease;
+  animation:inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+	from { background:hsl(250, 100%, 44%) }
+  to 	{ width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+	from { background:hsl(250, 100%, 44%); }
+  to 	{ width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+	from { background:hsl(250, 100%, 44%); }
+  to 	{ width:0; background:transparent; }
+}
+
+/* Date Picker  */
+
+
+.form_input {
+    padding: 30px 15px;
+    border: 1px solid lightgrey;
+    border-radius: 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #4CAF50;
+    font-size: 18px;
+    letter-spacing: 1px;
+    position: relative;
+    font-weight: bold;
+}
+
+
+.input1:focus {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    outline-width: 0;
+    outline: none;
+}
+
+.input2:focus {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    outline-width: 0;
+    outline: none;
+}
+
+::placeholder {
+    color: #BDBDBD;
+    opacity: 1
+}
+
+:-ms-input-placeholder {
+    color: #BDBDBD
+}
+
+::-ms-input-placeholder {
+    color: #BDBDBD
+}
+
+.datepicker {
+    background-color: #fff;
+    border-radius: 0;
+    padding: 15px 20px;
+}
+
+.datepicker-dropdown {
+    left: calc(50% - 161px);
+}
+
+.datepicker-dropdown.datepicker-orient-left:before {
+    left: calc(50% - 6px);
+}
+
+.datepicker-dropdown.datepicker-orient-left:after {
+    left: calc(50% - 5px);
+}
+
+.datepicker table tr td.today,
+span.focused {
+    border-radius: 50%;
+    background-image: linear-gradient(#FFF3E0, #FFE0B2)
+}
+
+.datepicker table tr td.today.range {
+    background-image: linear-gradient(#eeeeee, #eeeeee);
+    border-radius: 0;
+}
+
+thead tr:nth-child(3) th {
+    font-weight: bold;
+    padding-top: 10px;
+    padding-bottom: 10px
+}
+
+.old,
+.day,
+.new {
+    width: 40px;
+    height: 40px;
+    border-radius: 0px;
+    border: 1px solid lightgrey;
+}
+
+.day.old,
+.day.new {
+    background-color: #F5F5F5;
+    color: #E0E0E0;
+}
+
+.day.old:hover,
+.day.new:hover {
+    border-radius: 0px;
+}
+
+.old-day:hover,
+.day:hover,
+.new-day:hover,
+.month:hover,
+.year:hover,
+.decade:hover,
+.century:hover {
+    border-radius: 50%;
+    background-color: #eee
+}
+
+.range-start,
+.range-end {
+    border-radius: 50%;
+    background-image: linear-gradient(#4CAF50, #4CAF50);
+}
+
+.range {
+    color: #4CAF50;
+}
+
+.prev,
+.next,
+.datepicker-switch {
+    border-radius: 0;
+    padding: 10px 10px 10px 10px;
+    font-size: 18px;
+    opacity: 0.7;
+    color: #4CAF50
+}
+
+.prev:hover,
+.next:hover,
+.datepicker-switch:hover {
+    background-color: inherit;
+    opacity: 1
+}
+
+@media screen and (max-width: 500px) {
+    .datepicker-dropdown.datepicker-orient-right:before {
+        right: calc(50% - 6px);
+    }
+
+    .datepicker-dropdown.datepicker-orient-right:after {
+        right: calc(50% - 5px);
+    }
+}
