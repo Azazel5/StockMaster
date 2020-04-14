@@ -1,5 +1,7 @@
 import requests, bs4 
 
+# Scrapes the stock exchange end-of-the-day information and returns it as a list of dictionaries
+# to be passed into a template as context later 
 def info_scraper():
     list_struct = []
     index = 1 

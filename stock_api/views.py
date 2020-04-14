@@ -8,6 +8,12 @@ from .permissions import IsAuthenticatedSuperuser
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
+# Model viewset for the company model 
+# -------------------------------------------
+# Overriden create function for this viewset to 
+# support multiple PUTs in the API, so it allows 
+# a list of JSON to be added  
+
     queryset = CompanyModel.objects.all().order_by('id')
     serializer_class = CompanyModelSerializer
     permission_classes = (IsAuthenticatedSuperuser,)
@@ -20,9 +26,13 @@ class CompanyViewSet(viewsets.ModelViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-# A viewset for the company information. It supports a query parameter 'company' where you can type in the 
-# company name to return a list of stocks of that company. 
 class CompanyInformationViewSet(viewsets.ModelViewSet):
+# A viewset for the company information. 
+# ----------------------------------------------------------------------
+# It supports a query parameter where you can type in the  
+# company name to return a list of stocks of that company. url/stock/?company=...
+# Similar overrided create function to allow multiple PUTs in the API 
+
     queryset = CompanyStockInformation.objects.all().order_by('id')
     serializer_class = CompanyStockInformationSerializer
     permission_classes = (IsAuthenticatedSuperuser,)
@@ -43,6 +53,9 @@ class CompanyInformationViewSet(viewsets.ModelViewSet):
         return self.queryset
 
 class CompanyMaximumTransactionView(viewsets.ReadOnlyModelViewSet):
+# API endpoint to order the stocks by amount. Later I will use this to support 
+# date ranges and only return the top 123 companies for that daterange, and is 
+# why I decided to make this an endpoint instead of just querying the model.
     queryset = CompanyStockInformation.objects.all().order_by('-amount')
     serializer_class = CompanyStockInformationSerializer
 

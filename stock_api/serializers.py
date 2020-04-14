@@ -2,6 +2,10 @@ from rest_framework import serializers
 from .models import CompanyModel, CompanyStockInformation
 
 class CompanyModelSerializer(serializers.ModelSerializer):
+# Company model serializer to be user in views.py later 
+# -----------------------------------------------------
+# Overriden create function to make sure duplicate companies 
+# aren't created 
     company_id = serializers.CharField(source='id', read_only=True)
     class Meta:
         model = CompanyModel
@@ -11,9 +15,12 @@ class CompanyModelSerializer(serializers.ModelSerializer):
         company, created = CompanyModel.objects.get_or_create(**validated_data)
         return company 
 
-# A nested serializer for the stock information; it creates the company if it isn't listed and adds the stock
-# to the existing company if it does. 
 class CompanyStockInformationSerializer(serializers.ModelSerializer):
+# A nested serializer for the stock information, nested with the CompanyModelSerializer.
+# ------------------------------------------------------------------------------------------------------------
+# It creates the company if it isn't listed and adds the stock to the existing company if it does. 
+# Json structure is: {stock_id, {CompanyModelSerializer}, other fields...}
+
     company = CompanyModelSerializer()
     class Meta:
         model = CompanyStockInformation

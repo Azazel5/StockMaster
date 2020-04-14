@@ -47,6 +47,11 @@ def set_display(request):
 @csrf_exempt
 @login_required
 def scrape_data(request):
+# This function does a post request to the API using the information acquired from the info_scraper function
+# ----------------------------------------------------------------------------------------------------------
+# Checks if the user is authenticated and a superuser. The csrf exempt is required as there is no form in
+# the view.
+
     if request.user.is_superuser:
         scraped_data = info_scraper()
 
@@ -63,6 +68,10 @@ def scrape_data(request):
             'message': 'You aint got the permission to do that'})
 
 def user_login(request):
+# Implementation of the custom login
+# -----------------------------------------------------------------------------------
+# Logs in the user is authenticated and redirects them to the homepage
+# else, passes an error messsage as context which is displayed in red in the template
     context = None 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -78,8 +87,3 @@ def user_login(request):
     return render(request, 'display/login.html', context=context) 
 
 
-# amount of transcations with date 
-# top %inc and %decre with date 
-# by company  
-
-# sharesansaar sspro 
