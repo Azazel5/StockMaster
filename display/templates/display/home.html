@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="  https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
-  <link rel="stylesheet" href="{% static 'display/vendor/css/select_box.css' %}">
+  <link rel="stylesheet" href="{% static 'display/vendor/css/home.css' %}">
 
   {% endblock styles %}
 </head>
@@ -80,53 +80,94 @@
     </div>
     <!-- Add dates/search boxes to this div -->
     <div class="col-sm d-flex">
-      <form method="GET">
-        <div class="group" style="display: none;">
-          <input name="company" class='company' type="text" required>
-          <span class="highlight"></span>
-          <span class="bar"></span>
-          <label class="company_label">Company Name</label>
-        </div>
-      </form>
+      <form method="GET" class="d-flex flex-column">
+        <div class="p-2">
+          <div class="group" style="display: none;">
+            <input id="company" name="company" class='company' type="text" autocomplete="off">
+            <span class="highlight"></span>
+            <span class="bar"></span>
+            <label class="company_label">Company Name</label>
+          </div>
 
-      <form method="GET">
-        <div class="input-group input-daterange" id="date_picker" style="display: none;">
-          <input name="start" type="text" class="form-input form-control input1" placeholder="Start Date">
-          <input name="end" type="text" class="form-control input2" placeholder="End Date"> </div>
-    </div>
+          <div class="input-group input-daterange" id="date_picker" style="display: none;">
+            <input id="start" name="start-date" type="text" class="form_input form-control input1"
+            placeholder="Start Date" autocomplete="off">
+            <input id="end" name="end-date" type="text" class="form_input form-control input2"
+            placeholder="End Date" autocomplete="off">
+          </div>
+          </div>
+          <div class="p-2">
+            <button type="submit" id="filter_button" style="display: none;" type="button" class="btn btn-outline-primary">Filter</button>
+          </div>
     </form>
 
   </div>
   <script type="text/javascript"
     src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
   <script>
+
+    // Initializing the Bootstrap datepicker and adding event listeners/styling options to it 
     $(document).ready(function () {
       $('.input-daterange').datepicker({
         format: 'dd-mm-yyyy',
         autoclose: true,
         orientation: 'top',
         clearBtn: true,
+        todayHighlight: true, 
+      }).on('show', function(e) {
+        $('#filter_button').css('visibility', 'hidden')
+      }).on('hide', function(e) {
+        $('#filter_button').css('visibility', 'visible')
       });
-
     });
+
+
+    /* 
+     * A bunch of jQuery options to hide and unhide different filter elements on click. It also
+     * disables some form inputs while enabling others because I have used the same form for the 
+     * two different GET query parameters (sorting by date and sorting by company).
+    */
 
     $('#label_company input:radio').click(function () {
       $('#date_picker').hide()
+
+      $('#company').removeAttr('disabled');
+      $('#start').attr('disabled', 'disabled')
+      $('#end').attr('disabled', 'disabled')
+
       $('.group').show()
+      $('#filter_button').show()
     });
     $('#label_transaction input:radio').click(function () {
       $('.group').hide()
+
+      $('#start').removeAttr('disabled')
+      $('#end').removeAttr('disabled')
+      $('#company').attr('disabled', 'disabled');
+
       $('#date_picker').show()
+      $('#filter_button').show()
     });
     $('#label_increase input:radio').click(function () {
       $('.group').hide()
+
+      $('#start').removeAttr('disabled')
+      $('#end').removeAttr('disabled')
+      $('#company').attr('disabled', 'disabled');
+
       $('#date_picker').show()
+      $('#filter_button').show()
     });
     $('#label_decrease input:radio').click(function () {
       $('.group').hide()
-      $('#date_picker').show()
-    });
 
+      $('#start').removeAttr('disabled')
+      $('#end').removeAttr('disabled')
+      $('#company').attr('disabled', 'disabled');
+
+      $('#date_picker').show()
+      $('#filter_button').show()
+    });
 
   </script>
 

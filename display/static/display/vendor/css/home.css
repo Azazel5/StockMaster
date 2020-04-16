@@ -125,9 +125,8 @@
   /* new stuff */
 
 
-.group 			  { 
+.group { 
   position:relative; 
-  margin-bottom:45px; 
 }
 .company				{
   font-size:18px;
@@ -221,16 +220,13 @@
 
 
 .form_input {
-    padding: 30px 15px;
     border: 1px solid lightgrey;
     border-radius: 10px;
     box-sizing: border-box;
     background-color: #fff;
     color: #4CAF50;
-    font-size: 18px;
     letter-spacing: 1px;
     position: relative;
-    font-weight: bold;
 }
 
 
@@ -266,8 +262,8 @@
 .datepicker {
     background-color: #fff;
     border-radius: 0;
-    padding: 15px 20px;
 }
+
 
 .datepicker-dropdown {
     left: calc(50% - 161px);

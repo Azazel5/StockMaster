@@ -32,7 +32,7 @@ def set_display(request):
             break 
     """
     # Get request with company done 
-    if request.method == 'GET':
+    if 'company' in request.GET:
         company_name = request.GET.get('company')
         if company_name != None:
             params = {'company': company_name}
