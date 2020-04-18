@@ -62,12 +62,13 @@ class CompanyMaximumTransactionView(viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         if 'filter' in self.request.query_params:
             filter_checker = self.request.query_params.get('filter', None)
-            start_date = self.request.query_params.get('start-date', None)
-            end_date = self.request.query_params.get('end-date', None)
-            self.queryset = (CompanyStockInformation.objects
-            .filter(date_added__range=[start_date, end_date])
-            .order_by('-amount'))
-
+            if filter_checker == 'transaction':
+                start_date = self.request.query_params.get('start-date', None)
+                end_date = self.request.query_params.get('end-date', None)
+                if start_date != '' and end_date != '':
+                    self.queryset = (CompanyStockInformation.objects
+                    .filter(date_added__range=[start_date, end_date])
+                    .order_by('-amount'))
         return self.queryset
 
             
