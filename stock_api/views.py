@@ -49,7 +49,7 @@ class CompanyInformationViewSet(viewsets.ModelViewSet):
         if 'company' in self.request.query_params:
             company_name = self.request.query_params.get('company', None)
             company = CompanyModel.objects.get(company_name=company_name)
-            self.queryset = CompanyStockInformation.objects.filter(company=company).order_by('id')            
+            self.queryset = CompanyStockInformation.objects.filter(company=company).order_by('id')          
         return self.queryset
 
 class CompanyMaximumTransactionView(viewsets.ReadOnlyModelViewSet):
@@ -58,6 +58,17 @@ class CompanyMaximumTransactionView(viewsets.ReadOnlyModelViewSet):
 # why I decided to make this an endpoint instead of just querying the model.
     queryset = CompanyStockInformation.objects.all().order_by('-amount')
     serializer_class = CompanyStockInformationSerializer
+
+    def get_queryset(self):
+        if 'filter' in self.request.query_params:
+            filter_checker = self.request.query_params.get('filter', None)
+            start_date = self.request.query_params.get('start-date', None)
+            end_date = self.request.query_params.get('end-date', None)
+            self.queryset = (CompanyStockInformation.objects
+            .filter(date_added__range=[start_date, end_date])
+            .order_by('-amount'))
+
+        return self.queryset
 
             
 

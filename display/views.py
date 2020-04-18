@@ -31,18 +31,37 @@ def set_display(request):
         if stock['next'] == None and company['next'] == None:
             break 
     """
-    # Get request with company done 
+    context = None 
+    # Get request with company done
     if 'company' in request.GET:
         company_name = request.GET.get('company')
         if company_name != None:
             params = {'company': company_name}
-            stock = requests.get('http://127.0.0.1:8000/api/stock/', params=params).json()
-            print(stock)
+            try:
+                stock = requests.get('http://127.0.0.1:8000/api/stock/', params=params).json()
+                context = {'accessor_stock': stock}
+            except:
+                context = {'accessor_stock': 'Our database doesn\'t have a stock like that'}
+    
+    elif 'filter' in request.GET:
+        filter_type = request.GET.get('filter')
+        start_date = request.GET.get('start-date')
+        end_date = request.GET.get('end-date')
+        if start_date != '' and end_date != '':
+            params = {
+                'filter': filter_type,
+                'start-date': start_date,
+                'end-date': end_date
+            }
+            try:
+                stock = requests.get('http://127.0.0.1:8000/api/max-transacation-amount/', params=params).json
+                context = {'accessor_stock': stock}
+            except:
+                context = {'accessor_stock': 'Something went wrong'}                
+        else:
+            context = {'accessor_stock': 'Dates are empty, fill something in'}
 
-    return render(request, 'display/home.html')#, context={
-    #    'accessor_stock': api_request_stock,
-    #    'accessor_company': api_request_company
-    #})
+    return render(request, 'display/home.html', context=context)
 
 @csrf_exempt
 @login_required

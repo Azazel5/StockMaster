@@ -89,89 +89,98 @@
             <label class="company_label">Company Name</label>
           </div>
 
+          <input id="filter_type" class="none" name="filter" type="hidden">
           <div class="input-group input-daterange" id="date_picker" style="display: none;">
             <input id="start" name="start-date" type="text" class="form_input form-control input1"
-            placeholder="Start Date" autocomplete="off">
-            <input id="end" name="end-date" type="text" class="form_input form-control input2"
-            placeholder="End Date" autocomplete="off">
+              placeholder="Start Date" autocomplete="off">
+            <input id="end" name="end-date" type="text" class="form_input form-control input2" placeholder="End Date"
+              autocomplete="off">
           </div>
-          </div>
-          <div class="p-2">
-            <button type="submit" id="filter_button" style="display: none;" type="button" class="btn btn-outline-primary">Filter</button>
-          </div>
-    </form>
+        </div>
+        <div class="p-2">
+          <button type="submit" id="filter_button" style="display: none;" type="button"
+            class="btn btn-outline-primary">Filter</button>
+        </div>
+      </form>
 
+    </div>
   </div>
-  <script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
-  <script>
 
-    // Initializing the Bootstrap datepicker and adding event listeners/styling options to it 
-    $(document).ready(function () {
-      $('.input-daterange').datepicker({
-        format: 'dd-mm-yyyy',
-        autoclose: true,
-        orientation: 'top',
-        clearBtn: true,
-        todayHighlight: true, 
-      }).on('show', function(e) {
-        $('#filter_button').css('visibility', 'hidden')
-      }).on('hide', function(e) {
-        $('#filter_button').css('visibility', 'visible')
+  <div class="container">
+    {{ accessor_stock }}
+  </div>
+
+    <script type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    <script>
+      // Initializing the Bootstrap datepicker and adding event listeners/styling options to it 
+      $(document).ready(function () {
+        $('.input-daterange').datepicker({
+          format: 'yyyy-mm-dd',
+          autoclose: true,
+          orientation: 'top',
+          clearBtn: true,
+          todayHighlight: true,
+        }).on('show', function (e) {
+          $('#filter_button').css('visibility', 'hidden')
+        }).on('hide', function (e) {
+          $('#filter_button').css('visibility', 'visible')
+        });
       });
-    });
 
+      /* 
+       * A bunch of jQuery options to hide and unhide different filter elements on click. It also
+       * disables some form inputs while enabling others because I have used the same form for the 
+       * two different GET query parameters (sorting by date and sorting by company).
+      */
 
-    /* 
-     * A bunch of jQuery options to hide and unhide different filter elements on click. It also
-     * disables some form inputs while enabling others because I have used the same form for the 
-     * two different GET query parameters (sorting by date and sorting by company).
-    */
+      $('#label_company input:radio').click(function () {
+        $('#date_picker').hide()
+        $('#filter_type').attr('name', '')
 
-    $('#label_company input:radio').click(function () {
-      $('#date_picker').hide()
+        $('#company').removeAttr('disabled');
+        $('#start').attr('disabled', 'disabled')
+        $('#end').attr('disabled', 'disabled')
 
-      $('#company').removeAttr('disabled');
-      $('#start').attr('disabled', 'disabled')
-      $('#end').attr('disabled', 'disabled')
+        $('.group').show()
+        $('#filter_button').show()
+      });
+      $('#label_transaction input:radio').click(function () {
+        $('.group').hide()
+        $('#filter_type').val('transaction')
+        
+        $('#start').removeAttr('disabled')
+        $('#end').removeAttr('disabled')
+        $('#company').attr('disabled', 'disabled');
 
-      $('.group').show()
-      $('#filter_button').show()
-    });
-    $('#label_transaction input:radio').click(function () {
-      $('.group').hide()
+        $('#date_picker').show()
+        $('#filter_button').show()
+      });
+      $('#label_increase input:radio').click(function () {
+        $('.group').hide()
+        $('#filter_type').val('increase')
 
-      $('#start').removeAttr('disabled')
-      $('#end').removeAttr('disabled')
-      $('#company').attr('disabled', 'disabled');
+        $('#start').removeAttr('disabled')
+        $('#end').removeAttr('disabled')
+        $('#company').attr('disabled', 'disabled');
 
-      $('#date_picker').show()
-      $('#filter_button').show()
-    });
-    $('#label_increase input:radio').click(function () {
-      $('.group').hide()
+        $('#date_picker').show()
+        $('#filter_button').show()
+      });
+      $('#label_decrease input:radio').click(function () {
+        $('.group').hide()
+        $('#filter_type').val('decrease')
 
-      $('#start').removeAttr('disabled')
-      $('#end').removeAttr('disabled')
-      $('#company').attr('disabled', 'disabled');
+        $('#start').removeAttr('disabled')
+        $('#end').removeAttr('disabled')
+        $('#company').attr('disabled', 'disabled');
 
-      $('#date_picker').show()
-      $('#filter_button').show()
-    });
-    $('#label_decrease input:radio').click(function () {
-      $('.group').hide()
+        $('#date_picker').show()
+        $('#filter_button').show()
+      });
 
-      $('#start').removeAttr('disabled')
-      $('#end').removeAttr('disabled')
-      $('#company').attr('disabled', 'disabled');
-
-      $('#date_picker').show()
-      $('#filter_button').show()
-    });
-
-  </script>
-
-  {% endblock content %}
+    </script>
+    {% endblock content %}
 
 
 </body>
