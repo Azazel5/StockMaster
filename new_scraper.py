@@ -10,7 +10,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 class SansaarScraper():
-# Scares the website using selenium in a variety of ways 
+# Scrapes the website using selenium in a variety of ways 
 # -----------------------------------------------------------------------------------
 # The scrape_today is a helper function returns a dataframe for today
 # (all values are str), so use the pd converting functions to convert them to
