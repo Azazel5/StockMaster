@@ -36,7 +36,8 @@ class SansaarScraper():
             dictionary_format = {}
             column = row.find_all('td')
             for i in range(len(column)):
-                dictionary_format[title_list[i].text]= column[i].text.replace('\n', '')
+                if i != 0:
+                    dictionary_format[title_list[i].text]= column[i].text.replace('\n', '')
             if dictionary_format != {}:
                 dictionary_list.append(dictionary_format)
 
@@ -87,19 +88,28 @@ class SansaarScraper():
             filename = directory + f'{fixed_str}_{dt}.csv'
             df.to_csv(filename)
 
+    # Creates a master dataframe of whatever is inside the monthly directory 
+    # Make sure that null dataframes are deleted. Divides master dataframe by rows
+    # to make calculations easier
+    def calculations(self):
+        directory = os.getcwd() + '/data/monthly/'
+        df_list = []        
+        for filename in os.listdir(directory):
+            filepath = os.path.join(directory, filename)
+            df = pd.read_csv(filepath, index_col=0)
+            if not df.empty:
+                df_list.append(df)
+        
+        main_df = pd.concat(df_list, ignore_index=True).sort_values(by=['Symbol'])
+        symbol_list = list(set(main_df['Symbol'].tolist()))
+        for item in symbol_list:
+            rows = main_df.loc[main_df['Symbol'] == item]
+           
 
-    def calculate_max_percent_increase_closing(self, sector, file1, file2):
-    # This function assumes that the number of rows of records match completely in 
-    # the date ranges, and it might not. Need to have checks for that or handle it 
-    # somehow. It returns the percent increasing in closing prices.
-        dir1 = f'{os.getcwd()}/data/monthly/{file1}'
-        dir2 = f'{os.getcwd()}/data/monthly/{file2}'
-        dfStart = pd.read_csv(dir1)
-        dfEnd = pd.read_csv(dir2)
 
+        """
         start_close_col = pd.to_numeric(dfStart['Close'])
         end_close_col = pd.to_numeric(dfEnd['Close'])
-        
         data = [
             dfStart['Symbol'], start_close_col, end_close_col, (end_close_col
             .sub(start_close_col)/start_close_col)*100
@@ -118,6 +128,7 @@ class SansaarScraper():
         fixed_str = sector.lower().strip().replace(' ', '')
         filename = directory + f'{fixed_str}-range.csv'
         max_percent_closing_df.to_csv(filename)
+    """
 
     
     def visualize(self):
