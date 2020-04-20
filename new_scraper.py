@@ -79,6 +79,33 @@ class SansaarScraper():
         df_list, date_list = self.scrape_today_by_range(sector, startdate)
         directory = os.getcwd() + '/data/monthly/'
         fixed_str = sector.lower().strip().replace(' ', '')
+        month = int(date_list[0][5:7])
+
+        if month == 1:
+            directory += 'january/'
+        elif month == 2:
+            directory += 'february/'
+        elif month == 3:
+            directory += 'march/'
+        elif month == 4:
+            directory += 'april/'
+        elif month == 5:
+            directory += 'may/'
+        elif month == 6:
+            directory += 'june/'
+        elif month == 7:
+            directory += 'july/'
+        elif month == 8:
+            directory += 'august/'
+        elif month == 9:
+            directory += 'september/'
+        elif month == 10:
+            directory += 'october/'
+        elif month == 11:
+            directory += 'november/'
+        elif month == 12:
+            directory += 'december/'
+
         if not os.path.exists(directory):
             os.makedirs(directory)
 
@@ -92,7 +119,7 @@ class SansaarScraper():
     # Make sure that null dataframes are deleted. Divides master dataframe by rows
     # to make calculations easier
     def calculations(self):
-        directory = os.getcwd() + '/data/monthly/'
+        directory = os.getcwd() + '/data/monthly/january/'
         df_list = []        
         for filename in os.listdir(directory):
             filepath = os.path.join(directory, filename)
@@ -100,11 +127,23 @@ class SansaarScraper():
             if not df.empty:
                 df_list.append(df)
         
-        main_df = pd.concat(df_list, ignore_index=True).sort_values(by=['Symbol'])
+        main_df = pd.concat(df_list, ignore_index=True).sort_values(by=['Symbol']).replace(',', '', regex=True)
+        main_df.to_csv(os.getcwd() + '/data/monthly/master_df.csv')
         symbol_list = list(set(main_df['Symbol'].tolist()))
+
+        dict_list = []
         for item in symbol_list:
             rows = main_df.loc[main_df['Symbol'] == item]
-           
+            values_dict = {
+                'Symbol': item, 'AvgOpen.': rows['Open'].mean().round(2), 'AvgHigh': rows['High'].mean().round(2), 
+                'AvgLow': rows['Low'].mean().round(2), 'AvgClose': rows['Close'].mean().round(2), 
+                'AvgVol': pd.to_numeric(rows['Vol']).mean().round(2), 'AvgTransaction': pd.to_numeric(rows['Turnover']).mean().round(2),
+                'AvgVWAP': rows['VWAP'].mean().round(2)
+            }
+            dict_list.append(values_dict)
+
+        calculation_df = pd.DataFrame(dict_list)
+        calculation_df.to_csv(os.getcwd() + '/data/monthly/calculations.csv')
 
 
         """
