@@ -201,15 +201,6 @@ class SansaarScraper():
         max_percent_closing_df.to_csv(filename)
     """
 
-    
-    def visualize(self):
-        df = pd.read_csv(f'{os.getcwd()}' + '/data/commercialbank_20200418.csv')
-        close = df[df.columns[6]]
-        prev_close = df[df.columns[9]]
-        print(close)
-
-
-
 
         
 
