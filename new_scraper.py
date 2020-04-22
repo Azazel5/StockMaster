@@ -67,8 +67,9 @@ class SansaarScraper():
         while startdate <= enddate:
             iter_date = startDate[:-2] + str(startdate)
             currDf = self.scrape_today(sector, iter_date)
-            df_list.append(currDf)
-            date_list.append(iter_date)
+            if not currDf.empty:
+                df_list.append(currDf)
+                date_list.append(iter_date)
             startdate += 1
 
         self.driver.close()
@@ -106,6 +107,36 @@ class SansaarScraper():
         elif month == 12:
             directory += 'december/'
 
+        if sector == 'All Sector':
+            directory += 'allsector/'
+        elif sector == 'Commercial Bank':
+            directory += 'commercialbank/'
+        elif sector == 'Development Bank':
+            directory += 'developmentbank/'    
+        elif sector == 'Finance':
+            directory += 'finance/'
+        elif sector == 'Hotel':
+            directory += 'hotel/'
+        elif sector == 'Hydropower':
+            directory += 'hydropower/'
+        elif sector == 'Life Insurance':
+            directory += 'lifeinsurance/'
+        elif sector == 'Manufacturing and Products':
+            directory += 'manufacturingproducts/'
+        elif sector == 'Microfinance':
+            directory += 'microfinance/'
+        elif sector == 'Mutual Fund':
+            directory += 'mutualfund/'
+        elif sector == 'Non-Life Insurance':
+            directory += 'nonlifeinsurance/'
+        elif sector == 'Others':
+            directory += 'others/'
+        elif sector == 'Promoter Share':
+            directory += 'promotershare/'  
+        elif sector == 'Trading':
+            directory += 'trading/'     
+
+
         if not os.path.exists(directory):
             os.makedirs(directory)
 
@@ -117,9 +148,10 @@ class SansaarScraper():
 
     # Creates a master dataframe of whatever is inside the monthly directory 
     # Make sure that null dataframes are deleted. Divides master dataframe by rows
-    # to make calculations easier
-    def calculations(self):
-        directory = os.getcwd() + '/data/monthly/january/'
+    # to make calculations easier. Make sure the month and you want to calculate 
+    # for matches the directory names. 
+    def month_stats(self, month, sector):
+        directory = os.getcwd() + f'/data/monthly/{month}/{sector}/'
         df_list = []        
         for filename in os.listdir(directory):
             filepath = os.path.join(directory, filename)
@@ -128,7 +160,7 @@ class SansaarScraper():
                 df_list.append(df)
         
         main_df = pd.concat(df_list, ignore_index=True).sort_values(by=['Symbol']).replace(',', '', regex=True)
-        main_df.to_csv(os.getcwd() + '/data/monthly/master_df.csv')
+        main_df.to_csv(os.getcwd() + f'/data/monthly/{month}/{sector}_{month}_master_df.csv')
         symbol_list = list(set(main_df['Symbol'].tolist()))
 
         dict_list = []
@@ -143,7 +175,7 @@ class SansaarScraper():
             dict_list.append(values_dict)
 
         calculation_df = pd.DataFrame(dict_list)
-        calculation_df.to_csv(os.getcwd() + '/data/monthly/calculations.csv')
+        calculation_df.to_csv(os.getcwd() +  f'/data/monthly/{month}/{sector}_{month}_averages.csv')
 
 
         """
