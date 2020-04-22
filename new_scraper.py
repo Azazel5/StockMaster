@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
 
 class SansaarScraper():
 # Scrapes the website using selenium in a variety of ways 
@@ -20,6 +22,10 @@ class SansaarScraper():
     def __init__(self):
         self.url = 'https://www.sharesansar.com/today-share-price'
         self.driver = None 
+        self.chrome_options = Options()
+        self.chrome_options.add_argument('--window-size=1920,1080')  
+        self.chrome_options.add_argument("--headless")
+
      
     def scrape_today(self, sector, date):
         findr = self.driver.find_element_by_xpath('//*[@id="fromdate"]')
@@ -45,7 +51,8 @@ class SansaarScraper():
 
     # Let startDate be less than any number, OR enddate after testing is done 
     def scrape_today_by_range(self, sector, startDate):
-        self.driver = webdriver.Chrome() 
+        if self.driver == None:
+            self.driver = webdriver.Chrome(options=self.chrome_options) 
         self.driver.get(self.url)
         
         WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((
@@ -72,7 +79,7 @@ class SansaarScraper():
                 date_list.append(iter_date)
             startdate += 1
 
-        self.driver.close()
+        self.close_driver()
         return df_list, date_list
 
     
@@ -177,7 +184,56 @@ class SansaarScraper():
         calculation_df = pd.DataFrame(dict_list)
         calculation_df.to_csv(os.getcwd() +  f'/data/monthly/{month}/{sector}_{month}_averages.csv')
 
+    def calc_ranges(self, sector, startDate, endDate, rows):
+        if self.driver == None:
+            self.driver = webdriver.Chrome(options=self.chrome_options) 
+        
+        self.driver.get('https://www.sharesansar.com/index-history-data')
+        WebDriverWait(self.driver, 3).until(EC.presence_of_element_located((
+        By.XPATH, '//*[@id="select2-sector-container"]'))).click()
+        self.driver.find_element_by_xpath('/html/body/span/span/span[1]/input').send_keys(sector)
+        
+        dp_start = self.driver.find_element_by_xpath('//*[@id="start"]')
+        dp_start.click()
+        dp_start.clear()
+        dp_start.send_keys(startDate)
 
+        dp_end = self.driver.find_element_by_xpath('//*[@id="end"]')
+        dp_end.click()
+        dp_end.clear()
+        dp_end.send_keys(endDate)
+
+        self.driver.find_element_by_xpath('//*[@id="select2-total_rows-container"]').click()
+        self.driver.find_element_by_xpath('/html/body/span/span/span[1]/input').send_keys(rows)
+        self.driver.find_element_by_xpath('//*[@id="search1"]').click()
+
+        time.sleep(2)
+        soup = BeautifulSoup(self.driver.page_source, 'html.parser')
+        self.close_driver()
+
+        headers = soup.find_all('th')
+        indices_list = []
+        
+        for i, row in enumerate(soup.find_all('tr')):
+            if i != 0:
+                indices_dict = {}
+                column = row.find_all('td')
+                for i in range(len(column)):
+                    if i == 0 or i == 4 or i == 5:
+                        indices_dict[headers[i].text] = column[i].text
+                indices_list.append(indices_dict)
+        
+        indices_df = pd.DataFrame(indices_list).replace(',', '', regex=True)
+        indices_df['AvgVolume.'] = pd.Series([pd.to_numeric(indices_df['Volume']).mean()])
+        start_close = float(indices_df.loc[indices_df['Date'] == startDate, 'Close'].values[0])
+        end_close = float(indices_df.loc[indices_df['Date'] == endDate, 'Close'].values[0])
+        indices_df['PercentInc.'] = pd.Series([((end_close-start_close)/start_close)*100])
+
+        start_df = self.scrape_today(sector, startDate)
+        end_df = self.scrape_today(sector, endDate)
+        
+        # The normal subtraction  between columns doesn't work here because there can be row mismatches 
+        # This functionality should be built with database queries, so set that up first. 
         """
         start_close_col = pd.to_numeric(dfStart['Close'])
         end_close_col = pd.to_numeric(dfEnd['Close'])
@@ -201,6 +257,8 @@ class SansaarScraper():
         max_percent_closing_df.to_csv(filename)
     """
 
+    def close_driver(self):
+        self.driver.close()
 
         
 
