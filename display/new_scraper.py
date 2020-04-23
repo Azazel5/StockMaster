@@ -224,39 +224,13 @@ class SansaarScraper():
                 indices_list.append(indices_dict)
         
         indices_df = pd.DataFrame(indices_list).replace(',', '', regex=True)
-        indices_df['AvgVolume.'] = pd.Series([pd.to_numeric(indices_df['Volume']).mean()])
+        indices_df['AvgVolume.'] = pd.Series([pd.to_numeric(indices_df['Volume']).mean()]).round(2)
         start_close = float(indices_df.loc[indices_df['Date'] == startDate, 'Close'].values[0])
         end_close = float(indices_df.loc[indices_df['Date'] == endDate, 'Close'].values[0])
-        indices_df['PercentInc.'] = pd.Series([((end_close-start_close)/start_close)*100])
+        indices_df['PercentInc.'] = pd.Series([((end_close-start_close)/start_close)*100]).round(2)
 
-        start_df = self.scrape_today(sector, startDate)
-        end_df = self.scrape_today(sector, endDate)
-        
-        # The normal subtraction  between columns doesn't work here because there can be row mismatches 
-        # This functionality should be built with database queries, so set that up first. 
-        """
-        start_close_col = pd.to_numeric(dfStart['Close'])
-        end_close_col = pd.to_numeric(dfEnd['Close'])
-        data = [
-            dfStart['Symbol'], start_close_col, end_close_col, (end_close_col
-            .sub(start_close_col)/start_close_col)*100
-        ]
-
-        max_percent_closing_df = pd.concat(
-            data,
-            axis=1,
-            keys=['Symbol', 'StartClose', 'EndClose', 'PercentInClose']
-        ).sort_values(by=['PercentInClose'], ascending=False)
-
-        directory = os.getcwd() + '/data/range/'
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-        todays_date = time.strftime('%Y%m%d')
-        fixed_str = sector.lower().strip().replace(' ', '')
-        filename = directory + f'{fixed_str}-range.csv'
-        max_percent_closing_df.to_csv(filename)
-    """
-
+        indices_df.to_csv(os.getcwd() +  f'/data/{sector}_{startDate}_{endDate}_indices.csv')
+ 
     def close_driver(self):
         self.driver.close()
 
