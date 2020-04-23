@@ -24,7 +24,7 @@ class SansaarScraper():
         self.driver = None 
         self.chrome_options = Options()
         self.chrome_options.add_argument('--window-size=1920,1080')  
-        self.chrome_options.add_argument("--headless")
+      #  self.chrome_options.add_argument("--headless")
 
      
     def scrape_today(self, sector, date):
@@ -230,6 +230,39 @@ class SansaarScraper():
         indices_df['PercentInc.'] = pd.Series([((end_close-start_close)/start_close)*100]).round(2)
 
         indices_df.to_csv(os.getcwd() +  f'/data/{sector}_{startDate}_{endDate}_indices.csv')
+        self.close_driver()
+
+    def scrape_company_info(self, company):
+        """
+        Make sure to write the FULL name of the company for this to work, including the limiteds and such.
+        It's because of how the scraping website has been structured. 
+        """
+        if self.driver == None:
+            self.driver = webdriver.Chrome(options=self.chrome_options) 
+        self.driver.get('https://www.sharesansar.com/')
+        self.driver.find_element_by_xpath('//*[@id="companypagesearch"]').send_keys(company)
+        time.sleep(1)
+        self.driver.find_element_by_xpath('//*[@id="eac-container-companypagesearch"]/ul/li[1]').click()
+        # Latest divident information table
+        dividend_table = self.driver.find_element_by_xpath(
+            '/html/body/div[1]/div/section[2]/div[3]/div/div[2]/div/div/div[1]/div/div[1]/div[1]/table/tbody'
+        )
+
+        dividend_soup = BeautifulSoup(dividend_table.get_attribute('innerHTML'), 'html.parser')
+        # Gives the dividend information
+        dividend_list = []
+        for row in dividend_soup.find_all('tr'):
+            info_type = None 
+            val_type = None 
+            for i, column in enumerate(row.find_all('td')):
+                if i == 0:
+                    info_type = column.text 
+                elif i == 1:
+                    val_type = column.text
+            dividend_list.append({info_type:val_type})
+
+        
+
  
     def close_driver(self):
         self.driver.close()
