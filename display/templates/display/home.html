@@ -19,29 +19,6 @@
 
 <body>
   {% block content %}
-  <!--
-          <h1>STOCK INFO</h1>
-            <p>
-            {% for dictionary in accessor_stock %}
-              {% for item in dictionary.results %}
-                Name : {{ item.company.company_name }} | Num_transactions : {{ item.number_of_transactions }} |
-                Max: {{ item.maximum }} | Min: {{ item.minimum }} | Closing: {{ item.closing }} | 
-                Traded: {{ item.traded_shares }} | Amount: {{ item.amount }} | Prev_Closing: {{ item.amount }} |
-                Diff_Rs: {{ item.difference_rs }} | Date_Added: {{ item.date_added }} 
-            <br>
-              {% endfor %}
-            {% endfor %}
-            </p>
-            <h1>COMPANY INFO</h1>
-            <p>
-            {% for dictionary in accessor_company %}
-              {% for item in dictionary.results %}
-                CompanyID: {{ item.company_id }} | Company_Name: {{ item.company_name }} 
-            <br>
-              {% endfor %}
-            {% endfor %}
-            </p>
-            -->
   <!-- 
     Stock filtration frontend. It has radio buttons for different types of filter. 
     Filter by company unhides the 'group' div which has the company name input box, and the 

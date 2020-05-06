@@ -1,1 +1,11 @@
-{{ message }}
+{% extends 'display/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    Much scraping and javascript will be done here 
+
+</div>
+
+<script src="{% static 'display/vendor/js/apihandles.js' %}" type="text/javascript"></script>
+{% endblock content %}

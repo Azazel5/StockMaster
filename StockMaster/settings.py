@@ -49,7 +49,6 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'stock_api.apps.StockApiConfig',
     'display.apps.DisplayConfig',
     'stockapi.apps.StockapiConfig',
 ]

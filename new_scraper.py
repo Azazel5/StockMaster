@@ -1,5 +1,6 @@
 import os 
 import time
+import json 
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -24,7 +25,7 @@ class SansaarScraper():
         self.driver = None 
         self.chrome_options = Options()
         self.chrome_options.add_argument('--window-size=1920,1080')  
-      #  self.chrome_options.add_argument("--headless")
+     #   self.chrome_options.add_argument("--headless")
 
      
     def scrape_today(self, sector, date):
@@ -71,7 +72,7 @@ class SansaarScraper():
 
         df_list = []
         date_list = []
-        while startdate <= enddate:
+        while startdate <= 3:
             iter_date = startDate[:-2] + str(startdate)
             currDf = self.scrape_today(sector, iter_date)
             if not currDf.empty:
@@ -81,7 +82,7 @@ class SansaarScraper():
 
         self.close_driver()
         return df_list, date_list
-
+    
     
     def export_to_csv_range(self, sector, startdate):
         df_list, date_list = self.scrape_today_by_range(sector, startdate)
@@ -234,15 +235,31 @@ class SansaarScraper():
 
     def scrape_company_info(self, company):
         """
-        Make sure to write the FULL name of the company for this to work, including the limiteds and such.
-        It's because of how the scraping website has been structured. 
+        Make sure to write the code of the company like this (company code) for this to work.
+        It's because of how the scraping website has been structured. This isn't petfect, but there's
+        room for improvement. 
         """
         if self.driver == None:
             self.driver = webdriver.Chrome(options=self.chrome_options) 
         self.driver.get('https://www.sharesansar.com/')
-        self.driver.find_element_by_xpath('//*[@id="companypagesearch"]').send_keys(company)
-        time.sleep(1)
-        self.driver.find_element_by_xpath('//*[@id="eac-container-companypagesearch"]/ul/li[1]').click()
+        box = self.driver.find_element_by_xpath('//*[@id="companypagesearch"]')
+        box.clear()
+        box.send_keys(company)
+     
+        time.sleep(3)
+        div =  (WebDriverWait(self.driver, 2).until(EC.presence_of_element_located((
+        By.CLASS_NAME, 'easy-autocomplete-container'))))
+
+        for li in div.find_elements_by_tag_name('li'):
+            if company.upper() in li.text:
+                li.click()
+                break 
+        
+        time.sleep(3)
+        company_name = self.driver.find_element_by_class_name('heading-title').text.strip()
+        length_subtractor = len(company_name) - len(company) - 2
+        company_name = company_name[:length_subtractor]
+    
         # Latest divident information table
         dividend_table = self.driver.find_element_by_xpath(
             '/html/body/div[1]/div/section[2]/div[3]/div/div[2]/div/div/div[1]/div/div[1]/div[1]/table/tbody'
@@ -261,9 +278,12 @@ class SansaarScraper():
                     val_type = column.text
             dividend_list.append({info_type:val_type})
 
-        
+        return company_name, dividend_list
 
- 
+
+    def return_driver(self):
+        return self.driver
+
     def close_driver(self):
         self.driver.close()
 
